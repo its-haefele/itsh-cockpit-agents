@@ -4,6 +4,12 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.33.15] – 2026-11-21
+### Geändert
+- Systemübersicht, Spalte Kunde: kompakt „Nummer · Kürzel“ bzw. nur die Kundennummer, wenn kein Kürzel eingetragen ist; der volle Name als Tooltip. Die Liste scrollt dadurch nicht mehr seitlich.
+### Behoben
+- Agent (Windows): Nach einem Selbst-Update startet ein kurzer Hilfsprozess den Dienst sofort neu. Bisher übernahm das die Dienst-Wiederherstellung, die nach mehreren Updates am selben Tag 5 bzw. 15 Minuten wartete. Wirkt ab dem nächsten Update nach 0.33.15 (der Wechsel auf 0.33.15 selbst läuft noch über die Wiederherstellung).
+
 ## [0.33.10] – 2026-11-21
 ### Behoben
 - CSV-Export: Schutz gegen Formel-Einschleusung prüft das erste sichtbare Zeichen (vorher ließ ein führendes Leerzeichen z. B. „ =BEFEHL“ durch).
