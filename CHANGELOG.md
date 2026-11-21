@@ -4,6 +4,11 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.32.2] – 2026-11-21
+### Behoben
+- Agent: Der gewollte Neustart nach einem Selbst-Update wird als Info („restarting for the agent update“) statt als Fehler „agent failed“ protokolliert.
+- Hinweis: Der Tag `ITSH_Cockpit/v0.32.2` zeigt auf den Code-Stand; dieser CHANGELOG-Eintrag wurde unmittelbar danach nachgetragen.
+
 ## [0.32.1] – 2026-11-21
 ### Behoben
 - Versionsnummern von Agent-Paketen werden streng geprüft (nur `X.Y.Z` aus reinen Zahlen, keine führenden Nullen oder Vorzeichen).
