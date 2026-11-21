@@ -4,6 +4,13 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.33.10] – 2026-11-21
+### Behoben
+- CSV-Export: Schutz gegen Formel-Einschleusung prüft das erste sichtbare Zeichen (vorher ließ ein führendes Leerzeichen z. B. „ =BEFEHL“ durch).
+- Speicher knapp: Berechnung ohne möglichen Zahlenüberlauf.
+- `grow-root.sh`: Der Probelauf ändert wirklich nichts mehr (Neueinlesen der Platte nur mit `--apply`).
+- Agent (Linux): Austausch beim Selbst-Update in einem Schritt (atomar) – der Programmpfad zeigt nie auf eine fehlende Datei; die alte Version bleibt als Kopie für den Rückfall. Windows unverändert (laufende Programme lassen sich dort nur umbenennen).
+
 ## [0.32.2] – 2026-11-21
 ### Behoben
 - Agent: Der gewollte Neustart nach einem Selbst-Update wird als Info („restarting for the agent update“) statt als Fehler „agent failed“ protokolliert.
