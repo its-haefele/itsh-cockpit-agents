@@ -4,6 +4,17 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.35.4] – 2026-11-22
+### Hinzugefügt
+- Installations-Befehlsketten (0.35.4): Nach dem Erstellen eines Registrierungs-Tokens zeigt die Kundenseite fertige Befehlsblöcke je Plattform (Windows PowerShell, Linux) in den Varianten „mit Jobs“ und „nur Inventar“, mit Token-Abfrage oder Token aus Datei. Die Blöcke laden den Agent vom Cockpit und vergleichen den SHA-256-Hash mit dem Wert, den das Cockpit aus seinem signaturgeprüften Manifest einsetzt (die Signatur prüft der Block selbst nicht; Vertrauensanker ist die Cockpit-Seite per HTTPS).
+- Öffentlicher Download der freigegebenen Agent-Version unter `GET /downloads/public/agent/*` (nur freigegebene, signaturgeprüfte Version, strenge Prüfung von Manifest und Host).
+- Agent: Option `install -token-file <Datei>` (erste nicht leere Zeile, Datei bleibt erhalten); die Blöcke nutzen sie nur für Agents ab 0.35.4.
+- Server-Adresse in den Blöcken aus `COCKPIT_PUBLIC_HOST`.
+
+### Sicherheit
+- Windows-Block: Setup-Ordner `C:ProgramDataITSH Cockpitsetup` mit Besitzer und geschützter DACL, nach dem Schützen erneut geprüft, Datei-Handle während der Prüfung offen gehalten.
+- Linux-Block läuft in einer Subshell-Funktion; die Token-Abfrage liest von `/dev/tty` ohne Echo, der Token landet nicht in der History.
+
 ## [0.35.0] – 2026-11-22
 ### Hinzugefügt
 - **Agent-Steuerung:** Schalter „Jobs“ je System im Cockpit (Systemseite, mit 2FA); Abzeichen „Jobs: an“, „Jobs: aus“, „Jobs: am Gerät gesperrt“, „Wird entfernt“, „Entfernt“ und Hinweis bei Agents < 0.35.0. Neues Recht `permAgentControl` (Globaler Admin, Kunden-Admin für eigene Kunden).
