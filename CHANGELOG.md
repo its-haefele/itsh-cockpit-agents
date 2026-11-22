@@ -4,6 +4,26 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.35.0] – 2026-11-22
+### Hinzugefügt
+- **Agent-Steuerung:** Schalter „Jobs“ je System im Cockpit (Systemseite, mit 2FA); Abzeichen „Jobs: an“, „Jobs: aus“, „Jobs: am Gerät gesperrt“, „Wird entfernt“, „Entfernt“ und Hinweis bei Agents < 0.35.0. Neues Recht `permAgentControl` (Globaler Admin, Kunden-Admin für eigene Kunden).
+- **Agent entfernen:** je System und gesammelt je Kunde (Kundenseite, hinter „Ändern“); der Agent entfernt sich nach Bestätigung selbst (Dienst, Konfiguration, Schlüssel, Logs) und stoppt ohne Neustart; Zurücknehmen bis zur Bestätigung möglich. Bestätigt wird erst, wenn der Helfer kopiert und geprüft ist; der Helfer schreibt `uninstall.log` neben seine Kopie. Hinweis bei inaktiven Kunden mit Link; Systemfilter „Entfernt“.
+- Agent: `install -deny-jobs` und Konfiguration `denyJobs`, `allowRemoteCommands`; gemeinsame Abfrage `POST /api/v1/agents/poll` für Jobs und Befehle alle `jobPollMinutes` (Standard 5), auch bei `denyJobs`. Ausgelieferte Jobs auf gesperrten Geräten werden als fehlgeschlagen („denied on device“) gemeldet.
+- Migration `0031_agent_control.sql`; Verlauf und Audit für Schalter, Entfernen und Gerätesperre.
+
+### Geändert
+- `allowRemoteJobs` entfällt (wird ignoriert, einmaliger Log-Hinweis, Datei wird nicht umgeschrieben). **Hinweis:** Agents nehmen nach dem Update auf 0.35.0 Jobs an, sofern nicht `denyJobs` gesetzt ist (bewusst; bisher sind nur interne Agents im Einsatz).
+- Entfernte Systeme zählen nicht mehr für Kacheln, Agent-Updates und die Managed-Pauschale. Die alte Job-Abfrage `PathJobs` bleibt für Agents < 0.35.0 bestehen.
+
+### Behoben
+- Agent entfernen (Linux): Helfer liegt unter `/var/lib/itsh-cockpit-remove` statt `/run` (auf Debian 13 `noexec`); vor der Bestätigung wird geprüft, dass der Ordner nicht `noexec` ist. `uninstall.log` übersteht einen Neustart.
+
+### Sicherheit
+- Der Server prüft Jobs-Schalter, Entfernen und Gerätesperre atomar beim Ausliefern von Jobs (`ClaimJobs`); Jobs entfernter Agents werden mit „agent removed“ abgebrochen. Der Agent prüft `denyJobs` zusätzlich selbst. Das Entfernen-Hilfsprogramm liegt außerhalb des Programmordners (Windows: geschützter Ordner unter `%ProgramData%`, Linux: `systemd-run`).
+
+### Hinweis
+- „Agent entfernen“ ist bisher nur mit Tests (Attrappen) geprüft; der Echttest unter Windows (DEUMTITSHNB00) und Linux (DEUMTITSHDMZ253) folgt nach dem Release.
+
 ## [0.33.15] – 2026-11-21
 ### Geändert
 - Systemübersicht, Spalte Kunde: kompakt „Nummer · Kürzel“ bzw. nur die Kundennummer, wenn kein Kürzel eingetragen ist; der volle Name als Tooltip. Die Liste scrollt dadurch nicht mehr seitlich.
