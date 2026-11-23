@@ -4,6 +4,17 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.35.5] – 2026-11-23
+### Hinzugefügt
+- **Update-Hinweis in der Abfrage** (Design: `doku/Agent-Update-Hinweis.md`): Die Antwort von `POST /api/v1/agents/poll` enthält `updatePending` (manuell angestoßenes Update steht an) und `updateCheckMinutes` (wirksamer Prüfabstand). Ein manuell angestoßenes Update holt der Agent beim nächsten Kontakt (rund 5 Minuten) statt erst im Stundenrhythmus; Auto-Update setzt keinen Hinweis.
+- **Prüfabstand für Agent-Updates** einstellbar: global unter Einstellungen → Updates und je Kunde auf der Kundenseite (`POST /customers/{number}/agent-check`); 15 Min. bis 24 Std., Standard 1 Std., mit Audit-Eintrag.
+
+### Geändert
+- Agent: Die regelmäßige Update-Prüfung ist zufällig innerhalb des Prüfabstands verteilt; der Abstand kommt vom Cockpit (nicht aus der `config.json`). Die Prüfung nach einem Inventar-Bericht bleibt.
+- Agent: Es bleibt kein ungenutzter Registrierungs-Token in der Konfiguration. `install -token` auf einem bereits registrierten Rechner meldet „already enrolled – token not needed“ und speichert den Token nicht; beim Start entfernt der Agent einen übrig gebliebenen `enrollToken`. Eine Neuregistrierung erfordert weiterhin zuerst `uninstall -purge`.
+- Befehlsblöcke (Windows und Linux): Sie erkennen einen bereits registrierten Rechner (nicht leerer `agentKey` in der Agent-Konfiguration, ohne Werte auszugeben) und melden dann „[ITSH] Fertig. Agent aktualisiert, der Rechner bleibt im Cockpit registriert.“, sonst wie bisher „… erscheint in ca. 3 Minuten im Cockpit.“
+- Doku: Prüfabstand und Hinweis in `Agent-Updates.md`, `Einstellungen.md`, `Betrieb.md`; Onboarding-Freischaltung in `Agent-Steuerung.md` und `Agent-Befehlsketten.md` auf 0.35.8 verschoben.
+
 ## [0.35.4] – 2026-11-22
 ### Hinzugefügt
 - Installations-Befehlsketten (0.35.4): Nach dem Erstellen eines Registrierungs-Tokens zeigt die Kundenseite fertige Befehlsblöcke je Plattform (Windows PowerShell, Linux) in den Varianten „mit Jobs“ und „nur Inventar“, mit Token-Abfrage oder Token aus Datei. Die Blöcke laden den Agent vom Cockpit und vergleichen den SHA-256-Hash mit dem Wert, den das Cockpit aus seinem signaturgeprüften Manifest einsetzt (die Signatur prüft der Block selbst nicht; Vertrauensanker ist die Cockpit-Seite per HTTPS).
