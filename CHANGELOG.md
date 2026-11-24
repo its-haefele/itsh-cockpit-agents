@@ -4,6 +4,17 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.36.22] – 2026-11-24
+### Hinzugefügt
+- **Onboarding-Freischaltung:** Die Gerätesperre `denyJobs` lässt sich aus dem Cockpit aufheben – mit Einwilligung eines auftragsberechtigten Ansprechpartners (Mail mit Link, öffentliche Seite `/onboarding/<Token>`, 3 Stunden, einmal nutzbar) und einem auf dem Entwicklungs-PC signierten Freischalt-Ticket (eigener Signatur-Kontext, 3 Stunden gültig). Kachel „Onboarding“ auf der Kundenseite (nur Globaler Admin, 2FA): Vorgang anlegen, Mail erneut senden, Ticket-Anfrage herunterladen, Ticket hochladen, abbrechen; Zustand je System, Hinweis an der Glocke, Verlauf und Audit-Log. Der Agent prüft Signatur, Agent-ID, Ablauf und Einmal-Wert, sichert die Konfiguration und meldet das Ergebnis.
+- **Strenge Gerätesperre:** `install -deny-jobs-strict` (`"denyJobs": "strict"`) lässt sich nur am Gerät aufheben; Tickets werden abgelehnt, das Cockpit bietet keinen Vorgang an.
+- **Werkzeug `01_build\New-UnlockTicket.ps1`** (mit `release unlock-ticket`): erzeugt aus der Ticket-Anfrage das signierte Ticket; der Signaturschlüssel (`ITSH_SIGNING_KEY`) bleibt auf dem Entwicklungs-PC. Vor dem Signieren zeigt es Vorgang, Kundennummer und Agent-IDs der Anfrage und fragt „Signieren? (ja/nein)“ (`-Yes` nur für Scripte).
+
+### Hinweise
+- **Agent-Paket 0.36.22 nötig** (Agents ab dieser Version verstehen das Ticket und die strenge Sperre).
+- Migration `0040` (Onboarding-Vorgänge).
+- **Sophos-WAF:** neuer öffentlicher Pfad `/onboarding/*` (Link-Seiten); ggf. Upload-Ausnahme für `/customers/*/onboarding/*/ticket`; Regelwerk in `doku\Betrieb.md`, Abschnitt 4.
+
 ## [0.35.5] – 2026-11-23
 ### Hinzugefügt
 - **Update-Hinweis in der Abfrage** (Design: `doku/Agent-Update-Hinweis.md`): Die Antwort von `POST /api/v1/agents/poll` enthält `updatePending` (manuell angestoßenes Update steht an) und `updateCheckMinutes` (wirksamer Prüfabstand). Ein manuell angestoßenes Update holt der Agent beim nächsten Kontakt (rund 5 Minuten) statt erst im Stundenrhythmus; Auto-Update setzt keinen Hinweis.
