@@ -4,6 +4,12 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.41.0] – 2026-11-25
+### Hinzugefügt
+- **RustDesk über das Cockpit installieren:** Grundkonfiguration unter Einstellungen → RustDesk (Version, Passwortverfahren, Einmalpasswort, Sitzung bestätigen, Fernkonfiguration, Update-Prüfung, eigener Server/Key/Config-String; nur Globaler Admin, 2FA). Jobs „RustDesk installieren/aktualisieren“ und „Neues RustDesk-Passwort“ auf der Systemseite und beim Kunden (2FA). Der Agent lädt RustDesk direkt aus dem offiziellen GitHub-Repo, prüft unter Windows die Signatur (Herausgeber PURSLANE) und installiert unter Windows bzw. Debian/Ubuntu; danach wird die installierte Version geprüft. Ein Zufallspasswort je Rechner geht versiegelt ans Cockpit, wird verschlüsselt gespeichert und nur mit 2FA angezeigt (Audit). Migrationen 0044 und 0045. Agent-Paket 0.41.0. Design: `doku/Fernwartung.md`.
+### Sicherheit
+- Restrisiko (bewusst): Beim Setzen steht das Passwort kurz in der Prozessliste (RustDesk-CLI bietet keinen anderen Weg); für Debian-Pakete gibt es keine Signatur von RustDesk.
+
 ## [0.40.0] – 2026-11-25
 ### Hinzugefügt
 - **Fernwartungs-IDs:** Der Agent meldet die Rechner-ID der installierten Fernwartungs-Tools – RustDesk, TeamViewer und AnyDesk (Windows und Linux), Supremo (Windows). Nur die ID wird gelesen, keine Passwörter oder Sitzungs-IDs; ohne Installation (QuickSupport) wird nichts gemeldet. Anzeige auf der Systemseite und beim Asset (Abschnitt „Fernwartung“ mit Kopieren und Verbinden) sowie als Spalte in Systeme, Asset-Center und Assets beim Kunden; Änderungen stehen im Verlauf des Systems. Migration 0043. Design: `doku/Fernwartung.md`.
