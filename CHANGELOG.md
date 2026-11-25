@@ -4,6 +4,27 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.37.0] – 2026-11-25
+### Hinzugefügt
+- **Freischalt-Schlüssel je Firma:** Jedes Cockpit hat einen eigenen Ed25519-Schlüssel (Hauptschlüssel plus Ersatzschlüssel) für die Onboarding-Freischaltung, getrennt vom Release-Schlüssel von ITSH. Jeder Globale Admin kann damit Tickets signieren, auch in anderen Firmen. Konzept: `doku\Freischalt-Schluessel.md`.
+- **Werkzeug „ITSH Freischaltung“** (`ITSH-Freischaltung.exe` für Windows, `ITSH-Freischaltung_linux_amd64` für Linux; Konsolen-Assistent und Kommandozeile): Schlüssel erzeugen (passwortgeschützte Dateien, scrypt + AES-256-GCM), Onboarding-Tickets signieren, Schlüsselwechsel signieren. Zeigt vor jedem Signieren den Inhalt und fragt nach Bestätigung. Die Dateien stehen im signierten Manifest (Feld `tools`, mit SHA-256) und als eigene GitHub-Release-Assets.
+- **Seite Einstellungen → Freischalt-Schlüssel** (Globaler Admin, 2FA): öffentliche Schlüssel hinterlegen (korrigierbar, bis ein Agent einen davon gemeldet hat – diese Sperre bleibt dauerhaft bis zum Notfall-Zurücksetzen), Vorlage und Upload für den Schlüsselwechsel, Gerätetabelle (aktuell, Wechsel ausstehend, andere Schlüssel – Block mit `-replace-unlock-keys` einfügen, kein Schlüssel, Agent zu alt; Filter nach Kunde), Hinweise in der Glocke (nicht eingerichtet, Geräte mit ausstehendem Wechsel, „Schlüssel wechseln, bevor <Name> ausscheidet“).
+- **Schlüsselwechsel:** Wechsel-Nachricht (Kontext `itsh-cockpit-unlockkeys-v1`, steigende Nummer, ohne Ablauf), mit einem aktuellen Schlüssel signiert; das Cockpit verteilt sie der Reihe nach an alle Agents (Rückmeldung `POST /api/v1/agents/unlock-keys/ack`, Verlaufseinträge). Geräte, die Wechsel verpasst haben, holen sie nacheinander ab.
+- **Hilfe-Seite „Freischaltung signieren“** (Avatar-Menü und Link in der Onboarding-Kachel): Schritt-für-Schritt-Anleitung, Download-Links und SHA-256 der Werkzeug-Dateien aus dem signaturgeprüften Manifest.
+- **Notfall-Befehl** auf dem Server-Host für den Fall, dass beide Schlüssel verloren sind: `server unlock-keys reset` (mit Abfrage, Audit-Eintrag zuerst, nie über die Weboberfläche).
+- Agent: Parameter `install -unlock-key` (max. 2), `-unlock-keys-seq` und `-replace-unlock-keys`; `config.json` kennt `unlockKeys` und `unlockKeysSeq`; die Abfrage meldet Stand und Schlüssel-IDs.
+
+### Geändert
+- **Tickets gelten nur noch mit dem Firmenschlüssel**, nicht mehr mit dem Release-Schlüssel – Agent und Cockpit prüfen ausschließlich gegen die Firmenschlüssel (kein Übergang). Ohne gespeicherten Schlüssel lehnt der Agent Tickets ab („no unlock key - paste the install block again“); das Cockpit bietet solche Geräte im Onboarding nicht an. `release unlock-ticket` entfällt; `01_build\New-UnlockTicket.ps1` ruft das Werkzeug auf und braucht `-Key` (kein `ITSH_SIGNING_KEY` mehr).
+- **Installationsblöcke enthalten die Schlüssel** (`-unlock-key … -unlock-keys-seq …`), sobald im Cockpit welche hinterlegt sind und die freigegebene Agent-Version mindestens 0.37.0 ist. Ein erneut eingefügter Block ersetzt vorhandene Schlüssel am Gerät nicht (nur mit `-replace-unlock-keys`).
+- Onboarding setzt Agent ab 0.37.0 mit aktuellem Schlüsselstand voraus.
+- `Build.ps1` baut das Werkzeug mit, `Build.ps1 -Release` und `Publish-AgentRelease.ps1` nehmen es ins Manifest bzw. als Release-Assets auf.
+
+### Hinweise
+- **Agent-Paket 0.37.0 nötig.** Bestehende Agents haben keinen Firmenschlüssel: Installationsblock auf jedem Gerät, das freigeschaltet werden soll, **erneut einfügen** (Registrierung bleibt).
+- Einrichtung nach dem Update: Werkzeug holen, Schlüssel erzeugen, öffentliche Texte unter Einstellungen → Freischalt-Schlüssel eintragen (`doku\Betrieb.md`, Abschnitt 7c).
+- Migration `0041` (Freischalt-Schlüssel, Wechsel-Nachrichten, Stand je Agent).
+
 ## [0.36.22] – 2026-11-24
 ### Hinzugefügt
 - **Onboarding-Freischaltung:** Die Gerätesperre `denyJobs` lässt sich aus dem Cockpit aufheben – mit Einwilligung eines auftragsberechtigten Ansprechpartners (Mail mit Link, öffentliche Seite `/onboarding/<Token>`, 3 Stunden, einmal nutzbar) und einem auf dem Entwicklungs-PC signierten Freischalt-Ticket (eigener Signatur-Kontext, 3 Stunden gültig). Kachel „Onboarding“ auf der Kundenseite (nur Globaler Admin, 2FA): Vorgang anlegen, Mail erneut senden, Ticket-Anfrage herunterladen, Ticket hochladen, abbrechen; Zustand je System, Hinweis an der Glocke, Verlauf und Audit-Log. Der Agent prüft Signatur, Agent-ID, Ablauf und Einmal-Wert, sichert die Konfiguration und meldet das Ergebnis.
