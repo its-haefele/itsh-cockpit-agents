@@ -4,6 +4,10 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.42.1] – 2026-11-26
+### Behoben
+- **Agent hing bei Software-Jobs:** Ließ ein von Chocolatey gestartetes Setup (z. B. AutoHotkey) die Ausgabe offen, wartete der Agent endlos, meldete keine Ergebnisse mehr und holte keine weiteren Jobs. Jetzt wartet er nach Programmende höchstens 30 Sekunden auf die Ausgabe. Bei Zeitüberschreitung beendet er alle vom Job gestarteten Programme (Windows: Job-Objekt, Linux: Prozessgruppe). Höchstdauer je Job 30 statt 60 Minuten.
+
 ## [0.41.0] – 2026-11-25
 ### Hinzugefügt
 - **RustDesk über das Cockpit installieren:** Grundkonfiguration unter Einstellungen → RustDesk (Version, Passwortverfahren, Einmalpasswort, Sitzung bestätigen, Fernkonfiguration, Update-Prüfung, eigener Server/Key/Config-String; nur Globaler Admin, 2FA). Jobs „RustDesk installieren/aktualisieren“ und „Neues RustDesk-Passwort“ auf der Systemseite und beim Kunden (2FA). Der Agent lädt RustDesk direkt aus dem offiziellen GitHub-Repo, prüft unter Windows die Signatur (Herausgeber PURSLANE) und installiert unter Windows bzw. Debian/Ubuntu; danach wird die installierte Version geprüft. Ein Zufallspasswort je Rechner geht versiegelt ans Cockpit, wird verschlüsselt gespeichert und nur mit 2FA angezeigt (Audit). Migrationen 0044 und 0045. Agent-Paket 0.41.0. Design: `doku/Fernwartung.md`.
