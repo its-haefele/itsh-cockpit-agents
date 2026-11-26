@@ -4,6 +4,10 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.45.0] – 2026-11-26
+### Hinzugefügt
+- **Inventar jetzt anfordern:** In der obersten Kachel der Systemseite (Knopf „Inventar jetzt anfordern“, danach „Inventar angefordert (seit HH:MM)“) und auf der Systemübersicht („Inventar für alle anfordern“) lässt sich das Inventar sofort abholen, statt bis zum nächsten Tageslauf zu warten (Recht „Jobs“, ohne 2FA, Audit `inventory_requested`, kein Verlaufseintrag). Der Agent (ab 0.45.0) startet auf den Hinweis `reportInventory` der nächsten Abfrage sofort einen Inventarlauf; der Agent schickt den Zeitstempel der Anforderung mit dem neuen Inventar zurück, und nur dieses Inventar erledigt die Anforderung (unabhängig von der Uhrzeit des Rechners). Entfernte Systeme und Agents unter 0.45.0 werden übersprungen. Migration 0050, Agent-Paket 0.45.0 nötig (Design: `doku\Inventar-Anfordern.md`).
+
 ## [0.44.0] – 2026-11-26
 ### Hinzugefügt
 - **Jobs abbrechen:** Auf der Systemseite (Kachel „Jobs“) lässt sich jeder wartende oder laufende Job mit „Abbrechen“ beenden, dazu „Alle offenen Jobs abbrechen“ je System (Recht „Jobs“, 2FA, Bestätigungsdialog mit Hinweis auf eine mögliche halbe Installation, Audit und Verlauf). Wartende Jobs werden sofort abgebrochen und nie ausgeliefert; bei laufenden zeigt der Job „Abbruch angefordert“, der Agent (ab 0.44.0) fragt während der Abarbeitung alle 30 Sekunden nach, beendet den Prozessbaum und überspringt noch nicht gestartete Jobs der Lieferung. Neuer Status „abgebrochen“; ältere Agents zeigen bei laufenden Jobs den Hinweis „Abbrechen erst ab Agent 0.44.0“. Migration 0049, Agent-Paket 0.44.0 nötig (Design: `doku\Job-Abbrechen.md`).
