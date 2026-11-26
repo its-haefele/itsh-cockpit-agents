@@ -4,6 +4,10 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.43.0] – 2026-11-26
+### Hinzugefügt
+- **Chocolatey über das Cockpit installieren:** Neuer Job „Chocolatey installieren“ für Windows-Systeme ohne Chocolatey, einzeln auf der Systemseite oder für alle betroffenen Windows-Systeme eines Kunden (Recht „Jobs“, 2FA, Audit und Verlauf; Systeme mit ausgeschalteten Jobs, deaktivierte und entfernte Systeme werden übersprungen). Der Agent lädt das offizielle Paket von chocolatey.org (nur HTTPS, Weiterleitungen nur auf chocolatey.org, höchstens 50 MB), entpackt es geschützt gegen Pfade außerhalb des Ziels, prüft danach jede entpackte Datei („alles verboten außer erlaubt“: Authenticode mit Herausgeber „Chocolatey Software, Inc.“, reine Datendateien, Lader-Dateien und das unsignierte 7-Zip/RefreshEnv.cmd nur an festen Pfaden) und führt das Install-Skript erst danach aus (Frist 15 Minuten); danach meldet er sofort ein neues Inventar. Ist Chocolatey schon da, endet der Job mit „already installed“. Migration 0048, Agent-Paket 0.43.0 nötig (Design: `doku\Chocolatey-Installation.md`).
+
 ## [0.42.1] – 2026-11-26
 ### Behoben
 - **Agent hing bei Software-Jobs:** Ließ ein von Chocolatey gestartetes Setup (z. B. AutoHotkey) die Ausgabe offen, wartete der Agent endlos, meldete keine Ergebnisse mehr und holte keine weiteren Jobs. Jetzt wartet er nach Programmende höchstens 30 Sekunden auf die Ausgabe. Bei Zeitüberschreitung beendet er alle vom Job gestarteten Programme (Windows: Job-Objekt, Linux: Prozessgruppe). Höchstdauer je Job 30 statt 60 Minuten.
