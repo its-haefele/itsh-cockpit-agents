@@ -4,6 +4,15 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.44.0] – 2026-11-26
+### Hinzugefügt
+- **Jobs abbrechen:** Auf der Systemseite (Kachel „Jobs“) lässt sich jeder wartende oder laufende Job mit „Abbrechen“ beenden, dazu „Alle offenen Jobs abbrechen“ je System (Recht „Jobs“, 2FA, Bestätigungsdialog mit Hinweis auf eine mögliche halbe Installation, Audit und Verlauf). Wartende Jobs werden sofort abgebrochen und nie ausgeliefert; bei laufenden zeigt der Job „Abbruch angefordert“, der Agent (ab 0.44.0) fragt während der Abarbeitung alle 30 Sekunden nach, beendet den Prozessbaum und überspringt noch nicht gestartete Jobs der Lieferung. Neuer Status „abgebrochen“; ältere Agents zeigen bei laufenden Jobs den Hinweis „Abbrechen erst ab Agent 0.44.0“. Migration 0049, Agent-Paket 0.44.0 nötig (Design: `doku\Job-Abbrechen.md`).
+
+### Behoben
+- **Glocke „Speicher des Cockpit-Servers knapp“:** nennt jetzt die geltende Schwelle (eigene des Systems, sonst die zentrale Einstellung) statt fest „weniger als 20 %“.
+- **Job-Ergebnis wurde nicht gespeichert:** Meldete ein Windows-Installer den Rückgabewert −1 als 4294967295 (z. B. oh-my-posh), lehnte die Datenbank das Ergebnis ab und der Job blieb auf „läuft“. Solche Werte werden jetzt in ihre vorzeichenbehaftete Form umgerechnet.
+- **Sicherheit:** Das Zugriffs-Log des Reverse-Proxys schreibt Agent-Schlüssel, Cookies und Authorization-Kopfzeilen nicht mehr mit.
+
 ## [0.43.0] – 2026-11-26
 ### Hinzugefügt
 - **Chocolatey über das Cockpit installieren:** Neuer Job „Chocolatey installieren“ für Windows-Systeme ohne Chocolatey, einzeln auf der Systemseite oder für alle betroffenen Windows-Systeme eines Kunden (Recht „Jobs“, 2FA, Audit und Verlauf; Systeme mit ausgeschalteten Jobs, deaktivierte und entfernte Systeme werden übersprungen). Der Agent lädt das offizielle Paket von chocolatey.org (nur HTTPS, Weiterleitungen nur auf chocolatey.org, höchstens 50 MB), entpackt es geschützt gegen Pfade außerhalb des Ziels, prüft danach jede entpackte Datei („alles verboten außer erlaubt“: Authenticode mit Herausgeber „Chocolatey Software, Inc.“, reine Datendateien, Lader-Dateien und das unsignierte 7-Zip/RefreshEnv.cmd nur an festen Pfaden) und führt das Install-Skript erst danach aus (Frist 15 Minuten); danach meldet er sofort ein neues Inventar. Ist Chocolatey schon da, endet der Job mit „already installed“. Migration 0048, Agent-Paket 0.43.0 nötig (Design: `doku\Chocolatey-Installation.md`).
