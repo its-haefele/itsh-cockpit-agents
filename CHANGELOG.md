@@ -4,6 +4,10 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.46.0] – 2026-11-26
+### Entfernt
+- **winget:** Der Agent fragt winget nicht mehr ab, das Cockpit zeigt und zählt keine winget-Updates mehr (auch nicht von älteren Agents). winget läuft nur im Benutzerkontext, seine Updates ließen sich über das Cockpit nie installieren und waren irreführend. Software-Updates laufen nur über Chocolatey bzw. den Linux-Paketmanager und Windows Update. Agent-Paket 0.46.0.
+
 ## [0.45.0] – 2026-11-26
 ### Hinzugefügt
 - **Inventar jetzt anfordern:** In der obersten Kachel der Systemseite (Knopf „Inventar jetzt anfordern“, danach „Inventar angefordert (seit HH:MM)“) und auf der Systemübersicht („Inventar für alle anfordern“) lässt sich das Inventar sofort abholen, statt bis zum nächsten Tageslauf zu warten (Recht „Jobs“, ohne 2FA, Audit `inventory_requested`, kein Verlaufseintrag). Der Agent (ab 0.45.0) startet auf den Hinweis `reportInventory` der nächsten Abfrage sofort einen Inventarlauf; der Agent schickt den Zeitstempel der Anforderung mit dem neuen Inventar zurück, und nur dieses Inventar erledigt die Anforderung (unabhängig von der Uhrzeit des Rechners). Entfernte Systeme und Agents unter 0.45.0 werden übersprungen. Migration 0050, Agent-Paket 0.45.0 nötig (Design: `doku\Inventar-Anfordern.md`).
