@@ -4,6 +4,18 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.49.0] – 2026-11-27
+### Hinzugefügt
+- **SSH-Schlüssel je Benutzer:** Im Profil lässt sich ein Schlüsselpaar (ed25519) erzeugen oder ein eigener öffentlicher Schlüssel hinterlegen, ersetzen und widerrufen (Globale Admins, Kunden-Admins, 2FA). Der private Schlüssel liegt nur verschlüsselt im Cockpit und wird nie angezeigt.
+- **Jobs `ssh_key_add` / `ssh_key_remove`:** Der Agent trägt den Schlüssel in `authorized_keys` ein bzw. entfernt ihn (Linux je Benutzer, `root` abgelehnt; Windows nur Administratoren über `administrators_authorized_keys`). Schlüsselwechsel trägt den neuen Schlüssel überall ein, wo der alte war.
+- **SSH-Zugänge am System:** Liste „SSH-Zugänge“ in der Fernwartungs-Kachel mit Eintragen/Entfernen und Job-Ergebnis.
+- **Glocke und Automatik:** Ausstehende Entfernungen erscheinen in der Glocke (auch nach fehlgeschlagenem oder verfallenem Job, bei entfernten Systemen mit „von Hand entfernen“ und Bestätigung). Fehlgeschlagene Entfernungen werden bei jeder Meldung erneut angelegt (1 Stunde Abstand). Die tägliche Aufräumung widerruft Schlüssel deaktivierter und ausgeschiedener Benutzer sowie von Rollen ohne Schlüsselrecht; Rollen-, Kunden- und Systemzuordnungswechsel entfernen die Zugänge; die Agent-Entfernung wartet auf die Schlüssel-Entfernung (die Entfernen-Jobs werden vor der Entfernungsanforderung angelegt). Die tägliche Aufräumung holt außerdem das Entfernen offener Zugänge widerrufener Schlüssel nach; hängende Eintragungen (Job verfallen, abgebrochen oder gelöscht) gelten als fehlgeschlagen und lassen sich neu eintragen.
+- **Kunden und SSH-Zugänge:** Wird ein Kunde inaktiv, werden die SSH-Zugänge auf seinen Systemen entfernt. Solange dort noch SSH-Zugänge offen sind, wird der Kunde weder von Hand noch automatisch gelöscht.
+- Migrationen 0054 (Jobtypen) und 0055 (`ssh_keys`, `ssh_key_grants`). Agent-Paket 0.49.0 nötig (Design: `doku\Web-Terminal.md`).
+
+### Behoben
+- **Windows-Update-Jobs:** Der `param()`-Block stand nicht am Anfang des Skripts, daher wurden `-Mode`, `-UpdateId` und `-Exclude` seit 0.9.0 nie übergeben. Jetzt steht `param()` zuerst.
+
 ## [0.48.0] – 2026-11-27
 ### Hinzugefügt
 - **SSH in der Fernwartung:** Der Agent meldet einen laufenden SSH-Server (Linux `ssh`/`sshd`, Windows-Dienst „OpenSSH SSH Server“) samt Port aus der `sshd_config`. Die Fernwartungs-Kachel zeigt je privater IPv4 eine Zeile „SSH“ mit Befehl, „Kopieren“ und „Verbinden“ (`ssh://`). Neues Feld „SSH-Benutzer“ je System (Recht Asset-Daten bearbeiten, Audit `system_ssh_user`, Verlauf). Migration 0053.
