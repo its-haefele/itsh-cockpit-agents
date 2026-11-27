@@ -4,6 +4,18 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.50.0] – 2026-11-27
+### Hinzugefügt
+- **Neustart über das Cockpit:** Auf der Systemseite (oberste Kachel) „Neu starten“ in X Minuten (vorbelegt mit der Standard-Vorwarnzeit), zu einem Zeitpunkt (höchstens 7 Tage voraus, deutsche Zeit) oder sofort (= in 1 Minute, damit der Agent sein Ergebnis noch meldet). Solange ein Neustart geplant ist, zeigt die Kachel den Zeitpunkt und „Neustart abbrechen“. Recht „Jobs“ (Globaler Admin, Kunden-Admin für eigene Kunden) und 2FA; Audit `reboot_requested`/`reboot_cancelled`, Verlauf „Neustart angefordert“/„Abbruch des Neustarts angefordert“. Auf dem Cockpit-Server zusätzlich die Warnung, dass auch das Cockpit neu startet. Ein Neustart wird weiterhin nie automatisch ausgelöst.
+- **Jobs `reboot` / `reboot_cancel`:** Windows `shutdown.exe /r /t <Sekunden> /c <Nachricht> /d p:0:0` (Abbruch `/a`) aus dem Systemordner, Linux `shutdown -r +<Minuten> <Nachricht>` (Abbruch `-c`) aus den Systemverzeichnissen; Argumente einzeln, keine Shell. Erfolg = `shutdown` hat den Befehl angenommen. Angemeldete Benutzer erhalten eine feste Nachricht mit dem Namen der Eigenen Firma und der Zeit („Wartung durch …: Neustart in 5 Minuten. Bitte speichern Sie Ihre Arbeit.“); Zentrale und Agent prüfen die Zeichen (Buchstaben, Ziffern, Leerzeichen, `.:,-()`, höchstens 200). Ein Neustart „in X Minuten“ verfällt, wenn der Agent ihn nicht binnen einer Stunde abholt; einer zu einem Zeitpunkt zu diesem Zeitpunkt.
+- **Einstellungen → Updates:** „Standard-Vorwarnzeit für Neustarts“ (1–1440 Minuten, Standard 5; Globaler Admin).
+- **Systemübersicht:** Eigener, blinkender Status-Punkt (Türkis) für „Neustart ausstehend“ mit Legende; ohne Blinken bei „Bewegung reduzieren“. Kritische Updates (rot) haben Vorrang.
+- Migration 0056 (Jobtypen). Agent-Paket 0.50.0 nötig; ältere Agents zeigen einen Hinweis statt des Knopfs (Design: `doku\Neustart.md`).
+- Ein Abbruch ohne geplanten Neustart (Windows 1116) gilt als Erfolg; Linux-Systeme ohne systemd lehnen Neustart-Jobs mit Hinweis ab. Windows schließt beim geplanten Neustart offene Programme (`/t` > 0 wirkt wie `/f`); einen bereits geplanten Neustart lehnt Windows ab (1190), Linux ersetzt ihn.
+
+### Behoben
+- **Test `TestSSHKeys`:** räumt seine Daten jetzt wirklich auf (die Datenbankverbindung wurde vor dem Aufräumen geschlossen) und vergleicht ausstehende Entfernungen mit dem Startwert, damit er auf der gemeinsamen Testdatenbank stabil läuft.
+
 ## [0.49.0] – 2026-11-27
 ### Hinzugefügt
 - **SSH-Schlüssel je Benutzer:** Im Profil lässt sich ein Schlüsselpaar (ed25519) erzeugen oder ein eigener öffentlicher Schlüssel hinterlegen, ersetzen und widerrufen (Globale Admins, Kunden-Admins, 2FA). Der private Schlüssel liegt nur verschlüsselt im Cockpit und wird nie angezeigt.
