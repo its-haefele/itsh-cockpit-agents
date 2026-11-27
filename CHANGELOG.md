@@ -4,6 +4,10 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.51.1] – 2026-11-27
+### Behoben
+- **Inventar nach einem Neustart:** Der Agent merkt sich die Startzeit des Systems, die er zuletzt gemeldet hat (`bootTime` in `state.json`, Linux `/proc/stat` btime, Windows `GetTickCount64`). Beim Start des Dienstes meldet er das Inventar kurz danach, wenn sich die Startzeit geändert hat (Abweichungen bis 2 Minuten gelten als gleich). Bisher zeigte das Cockpit nach einem Neustart-Job „Neustart ausstehend“ und den alten letzten Start, bis zum nächsten täglichen Lauf, weil das Inventar nach dem Job noch vor dem Neustart gemeldet wurde. Der erste Start nach dem Update merkt sich den Wert nur. Agent-Paket 0.51.1 nötig.
+
 ## [0.51.0] – 2026-11-27
 ### Hinzugefügt
 - **SSH-Konfiguration prüfen:** Läuft ein SSH-Dienst, ermittelt der Agent beim Inventar die wirksame Konfiguration mit `sshd -T -f <sshd_config>` (Linux `sshd` aus den Systemverzeichnissen, Windows `System32\OpenSSH\sshd.exe` bzw. `Programme\OpenSSH\sshd.exe`) und meldet `pubkey`, `password`, `kbdInteractive`, `keyFileOK` (Windows: Block `Match Group administrators` mit `administrators_authorized_keys`; Linux: `AuthorizedKeysFile` enthält `.ssh/authorized_keys`), `keyOnlyManaged` und bei einem Fehler `configError` – keine Dateiinhalte, keine Benutzer. Linux ohne `-C`: Match-Blöcke werden nicht ausgewertet (siehe `doku\SSH-Konfiguration.md`).
