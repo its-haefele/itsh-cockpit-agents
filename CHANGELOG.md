@@ -4,6 +4,13 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.47.0] – 2026-11-27
+### Hinzugefügt
+- **Updates als ok vermerken:** Jede Update-Zeile der Systemseite hat „als ok vermerken“ (Recht „Jobs“ + 2FA-Code, Audit `update_marked`/`update_unmarked`, Verlaufseintrag). Vermerkte Updates gelten je System und Paket für jede Version, zählen nicht mehr als offen (Update-Zahl, Systemliste, Kundenübersicht, kritisch) und stehen im zugeklappten Abschnitt „Vermerkte Updates (n)“ mit „Vermerk aufheben“. „Alle installieren“ überspringt sie bei Chocolatey (`choco upgrade all --except=…`) und Windows Update (`-Exclude`); unter Linux gibt es dafür einen Hinweis. Agents unter 0.47.0 bekommen kein „Alle installieren“, solange Vermerke bestehen. Migration 0051.
+- **Benutzerkontext erkennen:** Der Agent meldet je Programm, ob es für den Rechner oder nur in einem Benutzerprofil installiert ist (ohne Benutzernamen), und zusätzlich die Store-Pakete (MSIX/Appx) aller Benutzer. Chocolatey-Updates solcher Programme tragen das Abzeichen „Benutzerkontext (vermutet)“; scheitert ein Job mit `0x80073CF9`, merkt sich das Cockpit das („Benutzerkontext (bestätigt)“) und die Jobzeile empfiehlt, als Benutzer zu aktualisieren oder das Update als ok zu vermerken. Anlass: oh-my-posh auf NBMH.
+- **Paketlisten aktualisieren (Linux):** Neuer Job `pkg_refresh` (`apt-get update`, `dnf`/`yum makecache`, `zypper refresh`), Knopf rechts oben in der Update-Kachel – auch ohne offene Updates – und in der Zeile „Paketlisten veraltet“. Danach schickt der Agent ein neues Inventar.
+- Agent-Paket 0.47.0 nötig (Design: `doku\Update-Vermerk-Benutzerkontext.md`).
+
 ## [0.46.0] – 2026-11-26
 ### Entfernt
 - **winget:** Der Agent fragt winget nicht mehr ab, das Cockpit zeigt und zählt keine winget-Updates mehr (auch nicht von älteren Agents). winget läuft nur im Benutzerkontext, seine Updates ließen sich über das Cockpit nie installieren und waren irreführend. Software-Updates laufen nur über Chocolatey bzw. den Linux-Paketmanager und Windows Update. Agent-Paket 0.46.0.
