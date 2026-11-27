@@ -4,6 +4,13 @@ Alle Änderungen am ITSH Cockpit Agent seit Beginn der signierten Pakete, neuest
 Die Einträge werden beim Veröffentlichen einer Version automatisch ergänzt.
 Agents vor 0.32.0 aktualisieren sich nicht selbst und werden einmal von Hand mit `install` aktualisiert.
 
+## [0.48.0] – 2026-11-27
+### Hinzugefügt
+- **SSH in der Fernwartung:** Der Agent meldet einen laufenden SSH-Server (Linux `ssh`/`sshd`, Windows-Dienst „OpenSSH SSH Server“) samt Port aus der `sshd_config`. Die Fernwartungs-Kachel zeigt je privater IPv4 eine Zeile „SSH“ mit Befehl, „Kopieren“ und „Verbinden“ (`ssh://`). Neues Feld „SSH-Benutzer“ je System (Recht Asset-Daten bearbeiten, Audit `system_ssh_user`, Verlauf). Migration 0053.
+- **Linux ohne Desktop:** Der Agent meldet, ob ein X-Server/Xwayland installiert ist. Fehlt er und ist RustDesk installiert, zeigt die Kachel „kein Bildschirm – bitte SSH nutzen“ (Anlass: DMZ253, RustDesk-Server stürzt mit „cannot open display“ ab).
+- **Einstellungen → RustDesk:** Schalter „Linux ohne Desktop zulassen“ (`allow-linux-headless`, Standard an), wird bei RustDesk-Installationen unter Linux gesetzt.
+- Agent-Paket 0.48.0 nötig (Design: `doku\SSH-Fernwartung.md`).
+
 ## [0.47.0] – 2026-11-27
 ### Hinzugefügt
 - **Updates als ok vermerken:** Jede Update-Zeile der Systemseite hat „als ok vermerken“ (Recht „Jobs“ + 2FA-Code, Audit `update_marked`/`update_unmarked`, Verlaufseintrag). Vermerkte Updates gelten je System und Paket für jede Version, zählen nicht mehr als offen (Update-Zahl, Systemliste, Kundenübersicht, kritisch) und stehen im zugeklappten Abschnitt „Vermerkte Updates (n)“ mit „Vermerk aufheben“. „Alle installieren“ überspringt sie bei Chocolatey (`choco upgrade all --except=…`) und Windows Update (`-Exclude`); unter Linux gibt es dafür einen Hinweis. Agents unter 0.47.0 bekommen kein „Alle installieren“, solange Vermerke bestehen. Migration 0051.
